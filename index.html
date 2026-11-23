@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#059669">
+  <meta name="description" content="CatatBelanja — Anggaran Belanja Keluarga & Envelope Budgeting. Kendalikan pengeluaran dapur, tagihan, sekolah anak, dan tabungan tanpa stres.">
+  <title>CatatBelanja — Anggaran Belanja Keluarga</title>
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="app-header no-print">
+    <div class="header-inner container">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="14" x="2" y="5" rx="2"/>
+            <line x1="2" x2="22" y1="10" y2="10"/>
+            <path d="M7 15h.01M12 15h.01M17 15h.01"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <div class="brand-title">CatatBelanja <span class="badge-keluarga">Keluarga Hemat</span></div>
+          <div class="brand-sub">Envelope Budgeting & Catatan Belanja Harian</div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" role="tablist">
+        <button type="button" class="nav-tab active" data-view="amplop">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          <span>Amplop Anggaran</span>
+        </button>
+        <button type="button" class="nav-tab" data-view="riwayat">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Riwayat Belanja</span>
+        </button>
+        <button type="button" class="nav-tab" data-view="planner">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+          <span>Atur Anggaran</span>
+        </button>
+        <button type="button" class="nav-tab" data-view="analisis">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          <span>Analisis & Tips</span>
+        </button>
+      </nav>
+
+      <!-- Quick Action Header -->
+      <div class="header-tools">
+        <button type="button" class="btn-sm-primary" id="btnQuickCatatBelanja">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Catat Belanja</span>
+        </button>
+        <div class="online-indicator" title="Mode Offline PWA Aktif">
+          <span class="indicator-dot"></span>
+          <span>Offline Ready</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="main-container container">
+
+    <!-- VIEW 1: ENVELOPE BUDGETING (AMPLOP ANGGARAN BULANAN) -->
+    <section id="viewAmplop" class="app-view active">
+      <!-- Summary Dashboard Banner -->
+      <div class="budget-hero card">
+        <div class="hero-left">
+          <div class="month-chip" id="currentMonthYear">November 2026</div>
+          <h1 class="hero-title">Sisa Anggaran Belanja Bulan Ini</h1>
+          <div class="hero-remaining-val" id="totalRemainingBudget">Rp 0</div>
+          <p class="hero-sub" id="budgetHealthSummary">Dari total alokasi bulanan Rp 6.500.000</p>
+        </div>
+
+        <div class="hero-summary-stats">
+          <div class="sum-stat-card">
+            <span class="sum-stat-label">Total Alokasi</span>
+            <strong class="sum-stat-val" id="sumTotalAllocated">Rp 0</strong>
+          </div>
+          <div class="sum-stat-card">
+            <span class="sum-stat-label">Total Dibelanjakan</span>
+            <strong class="sum-stat-val text-rose" id="sumTotalSpent">Rp 0</strong>
+          </div>
+          <div class="sum-stat-card">
+            <span class="sum-stat-label">Persentase Terpakai</span>
+            <strong class="sum-stat-val text-amber" id="sumUsagePercentage">0%</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert Peringatan Amplop Menipis -->
+      <div class="alert-box card" id="alertAmplopWarning" hidden>
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-content">
+          <h4>Perhatian: Ada Amplop yang Mendekati Batas!</h4>
+          <p id="alertWarningText">Pos Belanja Dapur dan Hiburan sudah terpakai lebih dari 80% dari target bulanan.</p>
+        </div>
+      </div>
+
+      <!-- Action Bar -->
+      <div class="section-action-bar">
+        <div>
+          <h2>Amplop Anggaran Keluarga</h2>
+          <p>Pilih amplop di bawah ini untuk melihat rincian pengeluaran atau mencatat belanja baru.</p>
+        </div>
+        <button type="button" class="btn-primary" id="btnOpenInputModal">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Input Pengeluaran Baru</span>
+        </button>
+      </div>
+
+      <!-- Grid Amplop-amplop Belanja -->
+      <div class="envelopes-grid" id="envelopesGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- VIEW 2: RIWAYAT BELANJA HARIAN -->
+    <section id="viewRiwayat" class="app-view">
+      <div class="section-head-bar card">
+        <div>
+          <h2>Riwayat & Catatan Belanja Harian</h2>
+          <p>Daftar seluruh transaksi belanja rumah tangga yang telah dicatat bulan ini.</p>
+        </div>
+        <div class="head-actions">
+          <button type="button" class="btn-secondary" id="btnExportBelanjaCsv">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Export CSV</span>
+          </button>
+          <button type="button" class="btn-primary" id="btnOpenInputModalFromRiwayat">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>+ Catat Belanja</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-search-bar card">
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="expenseSearchInput" placeholder="Cari catatan belanja (contoh: beras, bensin, token PLN, les)...">
+        </div>
+        <select id="expenseEnvelopeFilter" class="filter-select">
+          <option value="ALL">Semua Amplop</option>
+          <!-- Options populated by JS -->
+        </select>
+        <select id="expensePaymentFilter" class="filter-select">
+          <option value="ALL">Semua Pembayaran</option>
+          <option value="Tunai">Tunai / Cash</option>
+          <option value="QRIS">QRIS / E-Wallet</option>
+          <option value="Transfer / Debit">Transfer / Debit</option>
+        </select>
+      </div>
+
+      <!-- Tabel Pengeluaran -->
+      <div class="table-card card">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Pos Amplop</th>
+                <th>Keterangan Belanjaan</th>
+                <th>Metode Bayar</th>
+                <th>Nominal Pengeluaran</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="expenseTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: ATUR ANGGARAN & BUDGET PLANNER -->
+    <section id="viewPlanner" class="app-view">
+      <div class="section-head-bar card">
+        <div>
+          <h2>Perencanaan Anggaran Amplop Bulanan</h2>
+          <p>Tentukan batas target alokasi untuk setiap amplop belanja agar keuangan keluarga tetap seimbang.</p>
+        </div>
+        <button type="button" class="btn-primary" id="btnSaveBudgetPlan">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          <span>Simpan Alokasi Anggaran</span>
+        </button>
+      </div>
+
+      <!-- 50/30/20 Guide Banner -->
+      <div class="planner-guide-card card">
+        <div class="guide-header">
+          <h3>Pedoman Sehat Keuangan Keluarga (Metode 50 / 30 / 20)</h3>
+          <span class="badge-tag">Rekomendasi Ahli Finansial</span>
+        </div>
+        <div class="guide-cols-grid">
+          <div class="guide-col">
+            <div class="g-pct text-emerald">50% Kebutuhan Pokok</div>
+            <p>Dapur, belanja pasar, tagihan listrik/air, sekolah anak, dan transportasi harian.</p>
+          </div>
+          <div class="guide-col">
+            <div class="g-pct text-amber">30% Keinginan & Rekreasi</div>
+            <p>Makan di luar, jajan akhir pekan, belanja hobi, dan liburan keluarga.</p>
+          </div>
+          <div class="guide-col">
+            <div class="g-pct text-primary">20% Tabungan & Darurat</div>
+            <p>Dana darurat keluarga, investasi masa depan, dan tabungan qurban/pendidikan.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Planner Inputs Grid -->
+      <div class="planner-inputs-grid" id="plannerInputsGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- VIEW 4: ANALISIS PENGELUARAN & TIPS HEMAT -->
+    <section id="viewAnalisis" class="app-view">
+      <!-- 4 Top Cards -->
+      <div class="analytics-metrics-grid">
+        <div class="analytic-card card">
+          <span class="an-label">Rata-rata Belanja Harian</span>
+          <div class="an-val text-primary" id="anDailyAverage">Rp 0</div>
+          <span class="an-sub">Berdasarkan hari berjalan bulan ini</span>
+        </div>
+        <div class="analytic-card card">
+          <span class="an-label">Pos Belanja Terbesar</span>
+          <div class="an-val text-rose" id="anTopCategory">-</div>
+          <span class="an-sub" id="anTopCategoryVal">Rp 0 terpakai</span>
+        </div>
+        <div class="analytic-card card">
+          <span class="an-label">Metode Pembayaran Favorit</span>
+          <div class="an-val text-emerald" id="anTopPayment">-</div>
+          <span class="an-sub" id="anTopPaymentPct">0% transaksi</span>
+        </div>
+        <div class="analytic-card card">
+          <span class="an-label">Status Anggaran</span>
+          <div class="an-val text-amber" id="anBudgetStatus">Aman</div>
+          <span class="an-sub" id="anBudgetStatusSub">Dalam batas wajar</span>
+        </div>
+      </div>
+
+      <div class="analytics-panels-grid">
+        <!-- Category Distribution Progress Bars -->
+        <div class="card">
+          <h3 class="panel-title">Komposisi Pengeluaran per Pos Amplop</h3>
+          <div class="category-bars-list" id="categoryBarsList">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Smart Tips Hemat Keluarga -->
+        <div class="card">
+          <h3 class="panel-title">Tips Hemat Cerdas untuk Keluarga</h3>
+          <div class="tips-list">
+            <div class="tip-item">
+              <span class="tip-num">1</span>
+              <div>
+                <strong>Belanja Bahan Pokok Mingguan (Meal Prep)</strong>
+                <p>Membuat jadwal menu masakan mingguan sebelum ke pasar tradisional dapat menghemat pos dapur hingga 25% dibanding beli harian.</p>
+              </div>
+            </div>
+            <div class="tip-item">
+              <span class="tip-num">2</span>
+              <div>
+                <strong>Aturan Jeda 48 Jam untuk Keinginan</strong>
+                <p>Jika ingin membeli barang di luar kebutuhan pokok (baju, perabot baru), tunggu 48 jam. Jika keinginan reda, uang tetap aman di tabungan.</p>
+              </div>
+            </div>
+            <div class="tip-item">
+              <span class="tip-num">3</span>
+              <div>
+                <strong>Audit Langganan & Pemakaian Listrik</strong>
+                <p>Matikan colokan alat elektronik saat malam dan evaluasi paket kuota/wifi rumah tangga secara berkala.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: INPUT CATAT BELANJA HARIAN -->
+  <div class="modal-backdrop" id="inputModal" hidden>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Catat Pengeluaran Belanja</h3>
+          <button type="button" class="btn-close" id="btnCloseInputModal">&times;</button>
+        </div>
+        <form id="formExpense" class="modal-form">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="expenseDateInput">Tanggal Belanja</label>
+              <input type="date" id="expenseDateInput" required>
+            </div>
+            <div class="form-group">
+              <label for="expenseEnvelopeSelect">Pilih Pos Amplop</label>
+              <select id="expenseEnvelopeSelect" required>
+                <!-- Populated by JS -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="expenseAmountInput">Nominal Belanja (Rp)</label>
+            <input type="number" id="expenseAmountInput" required placeholder="Contoh: 75000" min="500">
+          </div>
+
+          <!-- Quick Amount Chips -->
+          <div class="quick-chip-row">
+            <button type="button" class="amt-chip" data-amt="25000">+25 Ribu</button>
+            <button type="button" class="amt-chip" data-amt="50000">+50 Ribu</button>
+            <button type="button" class="amt-chip" data-amt="100000">+100 Ribu</button>
+            <button type="button" class="amt-chip" data-amt="200000">+200 Ribu</button>
+          </div>
+
+          <div class="form-group">
+            <label for="expenseDescInput">Catatan / Rincian Belanja</label>
+            <input type="text" id="expenseDescInput" required placeholder="Contoh: Belanja ayam, sayur bayam, tempe di Pasar Beringharjo">
+          </div>
+
+          <div class="form-group">
+            <label for="expensePaymentSelect">Metode Pembayaran</label>
+            <select id="expensePaymentSelect">
+              <option value="Tunai">Tunai / Uang Cash</option>
+              <option value="QRIS">QRIS / E-Wallet (GoPay, OVO, ShopeePay)</option>
+              <option value="Transfer / Debit">Transfer Bank / Kartu Debit</option>
+            </select>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="btnCancelInputModal">Batal</button>
+            <button type="submit" class="btn-primary">Simpan ke Amplop</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer no-print">
+    <div class="container footer-inner">
+      <p>&copy; 2026 CatatBelanja — Sistem Anggaran Amplop Belanja Keluarga. Kelola Keuangan dengan Tenang & Bijak.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
